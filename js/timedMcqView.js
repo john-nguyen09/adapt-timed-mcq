@@ -13,8 +13,7 @@ define([
             'blur .timedMcq-item input':'onItemBlur',
             'change .timedMcq-item input':'onItemSelected',
             'keyup .timedMcq-item input':'onKeyPress',
-            'click .timedMcq-time-start' : 'startTimer',
-            'click .stoppedimgtimer' : 'setupInitialimgTimer'
+            'click .timedMcq-time-start' : 'startTimer'
         },
 
         resetQuestionOnRevisit: function() {
@@ -100,7 +99,6 @@ define([
                 if (visiblePartY === 'top') {
                     this._isVisibleTop = true;
                     this.stopTimer2();
-                    this.setupInitialimgTimer();
                 } else if (visiblePartY === 'bottom') {
                     this._isVisibleBottom = true;
                 } else {
@@ -163,49 +161,6 @@ define([
             if (this.model.get('_isRandom') && this.model.get('_isEnabled')) {
                 this.model.set("_items", _.shuffle(this.model.get("_items")));
             }
-        },
-
-        setupInitialimgTimer: function() {
-
-            if (this.model.get('_timedimgEnabled') && this.model.get('_isEnabled')) {
-                
-                var currentimedmcq = this.model.get('_id');
-                var seconds = this.model.get("_seconds");
-                var timedimg_height = $("." + currentimedmcq + ".enabledimgtime .timedMcq-time-start img").height(); // Get my img height
-
-                if (seconds <= 0) {
-                    $(".enabledimgtime .timedMcq-time").removeClass("stoppedimgtimer");
-                } else {
-                    $("." + currentimedmcq + ".enabledimgtime .timedMcq-time").addClass("stoppedimgtimer");
-                }
-
-                if (this.model.get('_timedimgEnabled') && this.model.get('_graphic').src ) {
-                    if (timedimg_height == 0) {
-                        $("." + currentimedmcq + ".enabledimgtime .timedMcq__inner").css("min-height", "");
-                    } else {
-                        $("." + currentimedmcq + ".enabledimgtime .timedMcq__inner").css("min-height", timedimg_height+"px");
-                    }
-                }
-
-                if (  $("." + currentimedmcq + " .timedMcq__widget").hasClass( "submitted" ) || $("." + currentimedmcq + " .timedMcq__widget").hasClass( "complete" ) ) {
-                    
-                    $("." + currentimedmcq + " .timedMcq-time" ).addClass("display-none").addClass("started").attr("tabindex","0").attr("aria-label","time left to answer 0 seconds").text( "0" );
-                    $(".embedimgtimeup .timedMcq-time-start").removeClass("disabled").prop("disabled", false); //UNLOCKS FOR TIMED IMAGE COMPLETE
-                
-                    this.decreaseTime2();
-
-                } else {
-                    
-                    parent2 = this
-                    timer2 = setInterval(
-                            function(){ parent2.decreaseTime2(); $("." + currentimedmcq + ".enabledimgtime .imgcounton").removeClass("stoppedimgtimer"); } , 1000
-                    );
-                }
-
-            } else {
-                 //NOT Timed image
-            }
-            
         },
 
         restoreUserAnswers: function() {
@@ -302,22 +257,7 @@ define([
             this.setReadyStatus();
 
             var seconds = this.model.get("_seconds");
-            var currentimedmcq = this.model.get('_id');            
-            
-            if (this.model.get('_timedimgEnabled') && this.model.get('_isEnabled')) {
-                $("." + currentimedmcq + ".timedmcq").addClass("enabledimgtime");
-                $(".enabledimgtime .timedMcq-time-start").addClass("disabled").prop("disabled", true); //LOCKS ALL TIMED IMAGES
-
-                var timedimg_height = $("." + currentimedmcq + ".enabledimgtime .timedMcq-time-start img").height(); // Get my img height
-
-                if (this.model.get('_timedimgEnabled') && this.model.get('_graphic').src ) {
-                    if (timedimg_height == 0) {
-                        $("." + currentimedmcq + ".enabledimgtime .timedMcq__inner").css("min-height", "");
-                    } else {
-                        $("." + currentimedmcq + ".enabledimgtime .timedMcq__inner").css("min-height", timedimg_height+"px");
-                    }
-                }
-            }
+            var currentimedmcq = this.model.get('_id');
 
             if (  this.$(".timedMcq__widget").hasClass( "submitted" ) || this.$(".timedMcq__widget").hasClass( "complete" ) ) {
                 
