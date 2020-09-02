@@ -229,12 +229,21 @@ define([
             if (  $("." + currentimedmcq + ".timedmcq").hasClass( "embedimgtimeup" ) ) {
                 $("." + currentimedmcq + ".embedimgtimeup .btn__action").removeClass("disabled").prop("disabled", false);
             } else {
-                this.setupTimeUpFeedback();
                 this.model.set('_isCorrect', false);
+                this.model.set('_isComplete', true);
+                this.model.set('_isSubmitted', true);
+                this.setupTimeUpFeedback();
                 $("." + currentimedmcq + ".timedmcq .btn__action").prop("disabled", true);
-                this.showMarking();
+                this._runModelCompatibleFunction('updateAttempts');
+                this.$('.component__widget').addClass('is-submitted');
+                this._runModelCompatibleFunction('storeUserAnswer');
+                this._runModelCompatibleFunction('setScore');
+                this._runModelCompatibleFunction('checkQuestionCompletion');
+                if (this.model.shouldShowMarking) {
+                    this.showMarking();
+                }
+                this.recordInteraction();
                 Adapt.trigger('questionView:showFeedback', this);
-                this.updateButtons();
             }
         },
 
